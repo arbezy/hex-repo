@@ -31,7 +31,8 @@ func TestMapper_EntityToMongoEntity(t *testing.T) {
 		Internal: "ignoreme",
 	}
 
-	mongoEntity := mapper.ToMongo(testEntity)
+	mongoEntity, err := mapper.ToMongo(testEntity)
+	assert.Nil(t, err)
 
 	assert.NotNil(t, mongoEntity)
 	assert.Equal(t, testEntity.ID, mongoEntity.ID)
