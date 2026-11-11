@@ -1,5 +1,10 @@
 package mongo
 
-func NewMongoMapper() (MongoEntity, error) {
-	return MongoEntity{}, nil
+import ()
+
+type MongoMapper[T any] struct {
+}
+
+func NewMongoMapper[T any]() (MongoMapper[T], error) {
+	return MongoMapper[T]{}, nil
 }
