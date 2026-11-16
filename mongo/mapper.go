@@ -16,7 +16,6 @@ func (mm *MongoMapper[T]) ToMongo(entity T) (MongoEntity, error) {
 	var mongoEntity MongoEntity
 	mongoEntity.Fields = make(map[string]any)
 
-	// NOTE: ID is a special case! dont want to add this to fields!
 	// NOTE: need to ignore the - field!
 
 	// iterate through fields
@@ -25,13 +24,14 @@ func (mm *MongoMapper[T]) ToMongo(entity T) (MongoEntity, error) {
 		// match 'repo' tags
 		repoTag := v.Type().Field(i).Tag.Get("repo")
 		if repoTag != "" {
+			if repoTag == "_id" {
+				// TODO: think I need to pad this since mongo ids have a set length
+				mongoEntity.ID = v.Field(i).String()
+			}
 			// add to mongo entity fields
 			mongoEntity.Fields[v.Type().Field(i).Name] = v.Field(i).Interface()
 		}
 	}
-
-	// save the field type and map this to the new entity
-	// need to create bson fields on the new entry
 
 	fmt.Println(mongoEntity)
 	fmt.Println("FIELDS:")
