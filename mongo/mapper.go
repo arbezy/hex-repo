@@ -2,6 +2,7 @@ package mongo
 
 import (
 	"reflect"
+	"time"
 )
 
 type MongoMapper[T any] struct {
@@ -11,6 +12,7 @@ func NewMongoMapper[T any]() (MongoMapper[T], error) {
 	return MongoMapper[T]{}, nil
 }
 
+// TODO: need to add created at and updated at
 func (mm *MongoMapper[T]) ToMongo(entity T) (MongoEntity, error) {
 	var mongoEntity MongoEntity
 	mongoEntity.Fields = make(map[string]any)
@@ -33,6 +35,10 @@ func (mm *MongoMapper[T]) ToMongo(entity T) (MongoEntity, error) {
 			mongoEntity.Fields[v.Type().Field(i).Name] = v.Field(i).Interface()
 		}
 	}
+
+	// NOTE: this will not preserve created at time, possible todo would be to look for a createdAt field and handle that like ID
+	mongoEntity.CreatedAt = time.Now()
+	mongoEntity.UpdatedAt = time.Now()
 
 	return mongoEntity, nil
 }

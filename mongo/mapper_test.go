@@ -74,3 +74,22 @@ func TestMapper_EntityToMongoEntity_Ignore(t *testing.T) {
 	assert.NotNil(t, mongoEntity)
 	assert.Nil(t, mongoEntity.Fields["Internal"])
 }
+
+func TestMapper_EntityToMongoEntity_CreatedandUpdated(t *testing.T) {
+	mapper, _ := NewMongoMapper[TestEntity]()
+
+	testEntity := TestEntity{
+		ID:       "123def",
+		Name:     "John Mongo",
+		Email:    "johnmongo@mongo.com",
+		IsActive: true,
+		Internal: "ignoreme",
+	}
+
+	mongoEntity, err := mapper.ToMongo(testEntity)
+	assert.Nil(t, err)
+
+	assert.NotNil(t, mongoEntity)
+	assert.NotNil(t, mongoEntity.CreatedAt)
+	assert.NotNil(t, mongoEntity.UpdatedAt)
+}
