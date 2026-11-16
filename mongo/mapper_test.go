@@ -72,5 +72,5 @@ func TestMapper_EntityToMongoEntity_Ignore(t *testing.T) {
 	assert.Nil(t, err)
 
 	assert.NotNil(t, mongoEntity)
-	assert.Equal(t, "", mongoEntity.Fields["Internal"])
+	assert.Nil(t, mongoEntity.Fields["Internal"])
 }
