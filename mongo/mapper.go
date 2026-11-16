@@ -12,7 +12,6 @@ func NewMongoMapper[T any]() (MongoMapper[T], error) {
 	return MongoMapper[T]{}, nil
 }
 
-// TODO: need to add created at and updated at
 func (mm *MongoMapper[T]) ToMongo(entity T) (MongoEntity, error) {
 	var mongoEntity MongoEntity
 	mongoEntity.Fields = make(map[string]any)
@@ -23,13 +22,14 @@ func (mm *MongoMapper[T]) ToMongo(entity T) (MongoEntity, error) {
 		// match 'repo' tags
 		repoTag := v.Type().Field(i).Tag.Get("repo")
 		if repoTag != "" {
-			if repoTag == "_id" {
-				// TODO: think I need to pad this since mongo ids have a set length
-				mongoEntity.ID = v.Field(i).String()
-			}
 			// skip fields with dashes
 			if repoTag == "-" {
 				continue
+			}
+			// special handling for ID, as it shouldn't end up in the fields
+			if repoTag == "_id" {
+				// TODO: think I need to pad this since mongo ids have a set length
+				mongoEntity.ID = v.Field(i).String()
 			}
 			// add to mongo entity fields
 			mongoEntity.Fields[v.Type().Field(i).Name] = v.Field(i).Interface()
@@ -41,4 +41,10 @@ func (mm *MongoMapper[T]) ToMongo(entity T) (MongoEntity, error) {
 	mongoEntity.UpdatedAt = time.Now()
 
 	return mongoEntity, nil
+}
+
+func (mm *MongoMapper[T]) FromMongo(mongoEntity MongoEntity) (T, error) {
+	var entity T
+
+	return entity, nil
 }
